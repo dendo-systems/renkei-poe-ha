@@ -8,7 +8,7 @@
           "host": "Host"
         },
         "data_description": {
-          "host": "The IP address of your RENKEI PoE"
+          "host": "The IP address of your RENKEI PoE motor"
         }
       },
       "discovery_confirm": {
@@ -24,7 +24,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to the motor. Please check the IP address and port.",
+      "cannot_connect": "Failed to connect to the motor. Please check the IP address.",
       "invalid_host": "Invalid IP address format.",
       "timeout": "Connection timeout. Please check if the motor is online.",
       "unknown": "An unknown error occurred.",
