@@ -1,0 +1,90 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RENKEI PoE モーター設定",
+        "description": "RENKEI PoE モーター接続を設定します。",
+        "data": {
+          "host": "ホスト"
+        },
+        "data_description": {
+          "host": "RENKEI PoE の IP アドレス"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Dendo RENKEI PoE モーターを発見",
+        "description": "ネットワーク上で Dendo RENKEI PoE モーターが発見されました。追加しますか？"
+      },
+      "reconfigure": {
+        "title": "RENKEI PoE モーターの再設定",
+        "description": "この RENKEI PoE モーターの設定を更新します。",
+        "data": {
+          "host": "ホスト"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "モーターへの接続に失敗しました。IP アドレスとポートを確認してください。",
+      "invalid_host": "無効な IP アドレス形式です。",
+      "timeout": "接続タイムアウト。モーターがオンラインか確認してください。",
+      "unknown": "不明なエラーが発生しました。",
+      "already_configured": "このモーターは既に設定されています。"
+    },
+    "abort": {
+      "already_configured": "このモーターは既に設定されています。",
+      "already_in_progress": "このモーターの設定は既に進行中です。",
+      "cannot_connect": "モーターに接続できませんでした。"
+    }
+  },
+  "entity": {
+    "cover": {
+      "shade": {
+        "name": "モーター"
+      }
+    }
+  },
+  "services": {
+    "jog": {
+      "name": "モータージョグ",
+      "description": "識別のためにモーターを短時間動かします。",
+      "fields": {
+        "count": {
+          "name": "ジョグ回数",
+          "description": "モーターを動かす回数（1-10）。"
+        }
+      }
+    },
+    "set_position": {
+      "name": "位置設定",
+      "description": "オプションの遅延付きでモーターを特定の位置に移動します。",
+      "fields": {
+        "position": {
+          "name": "位置",
+          "description": "目標位置（0-100%）。"
+        },
+        "delay": {
+          "name": "遅延",
+          "description": "移動開始前の遅延（秒）。"
+        }
+      }
+    },
+    "absolute_move": {
+      "name": "絶対移動",
+      "description": "エンコーダー値を使用してモーターを特定の絶対位置に移動します。",
+      "fields": {
+        "position": {
+          "name": "絶対位置",
+          "description": "目標エンコーダー位置（0-65536）。"
+        },
+        "delay": {
+          "name": "遅延",
+          "description": "移動開始前の遅延（ミリ秒）。"
+        }
+      }
+    },
+    "get_status": {
+      "name": "ステータス取得",
+      "description": "診断用の完全なモーターステータスを取得（出力はログを確認）。"
+    }
+  }
+}

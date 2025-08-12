@@ -1,0 +1,90 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration du Moteur RENKEI PoE",
+        "description": "Configurez votre connexion de moteur RENKEI PoE.",
+        "data": {
+          "host": "Hôte"
+        },
+        "data_description": {
+          "host": "L'adresse IP de votre RENKEI PoE"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Moteur Dendo RENKEI PoE Découvert",
+        "description": "Un moteur Dendo RENKEI PoE a été découvert sur votre réseau. Souhaitez-vous l'ajouter ?"
+      },
+      "reconfigure": {
+        "title": "Reconfigurer le Moteur RENKEI PoE",
+        "description": "Mettre à jour la configuration de ce moteur RENKEI PoE.",
+        "data": {
+          "host": "Hôte"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Échec de la connexion au moteur. Veuillez vérifier l'adresse IP et le port.",
+      "invalid_host": "Format d'adresse IP invalide.",
+      "timeout": "Délai de connexion dépassé. Veuillez vérifier si le moteur est en ligne.",
+      "unknown": "Une erreur inconnue s'est produite.",
+      "already_configured": "Ce moteur est déjà configuré."
+    },
+    "abort": {
+      "already_configured": "Ce moteur est déjà configuré.",
+      "already_in_progress": "La configuration de ce moteur est déjà en cours.",
+      "cannot_connect": "Impossible de se connecter au moteur."
+    }
+  },
+  "entity": {
+    "cover": {
+      "shade": {
+        "name": "Moteur"
+      }
+    }
+  },
+  "services": {
+    "jog": {
+      "name": "Déplacer le Moteur",
+      "description": "Déplacer brièvement le moteur pour identification.",
+      "fields": {
+        "count": {
+          "name": "Nombre de Mouvements",
+          "description": "Nombre de fois pour déplacer le moteur (1-10)."
+        }
+      }
+    },
+    "set_position": {
+      "name": "Définir la Position",
+      "description": "Déplacer le moteur vers une position spécifique avec délai optionnel.",
+      "fields": {
+        "position": {
+          "name": "Position",
+          "description": "Position cible (0-100%)."
+        },
+        "delay": {
+          "name": "Délai",
+          "description": "Délai avant de commencer le mouvement (secondes)."
+        }
+      }
+    },
+    "absolute_move": {
+      "name": "Mouvement Absolu",
+      "description": "Déplacer le moteur vers une position absolue spécifique en utilisant les valeurs de l'encodeur.",
+      "fields": {
+        "position": {
+          "name": "Position Absolue",
+          "description": "Position cible de l'encodeur (0-65536)."
+        },
+        "delay": {
+          "name": "Délai",
+          "description": "Délai avant de commencer le mouvement (millisecondes)."
+        }
+      }
+    },
+    "get_status": {
+      "name": "Obtenir le Statut",
+      "description": "Obtenir le statut complet du moteur pour les diagnostics (vérifier les logs pour la sortie)."
+    }
+  }
+}

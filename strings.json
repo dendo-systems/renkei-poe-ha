@@ -1,0 +1,90 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RENKEI PoE Motor Setup",
+        "description": "Configure your RENKEI PoE motor connection.",
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "The IP address of your RENKEI PoE"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Discovered Dendo RENKEI PoE Motor",
+        "description": "A Dendo RENKEI PoE motor was discovered on your network. Would you like to add it?"
+      },
+      "reconfigure": {
+        "title": "Reconfigure RENKEI PoE Motor",
+        "description": "Update the configuration for this RENKEI PoE motor.",
+        "data": {
+          "host": "Host"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the motor. Please check the IP address and port.",
+      "invalid_host": "Invalid IP address format.",
+      "timeout": "Connection timeout. Please check if the motor is online.",
+      "unknown": "An unknown error occurred.",
+      "already_configured": "This motor is already configured."
+    },
+    "abort": {
+      "already_configured": "This motor is already configured.",
+      "already_in_progress": "Configuration for this motor is already in progress.",
+      "cannot_connect": "Could not connect to the motor."
+    }
+  },
+  "entity": {
+    "cover": {
+      "shade": {
+        "name": "Motor"
+      }
+    }
+  },
+  "services": {
+    "jog": {
+      "name": "Jog Motor",
+      "description": "Jog the motor for identification purposes.",
+      "fields": {
+        "count": {
+          "name": "Jog Count",
+          "description": "Number of times to jog the motor (1-10)."
+        }
+      }
+    },
+    "set_position": {
+      "name": "Set Position",
+      "description": "Move the motor to a specific position with optional delay.",
+      "fields": {
+        "position": {
+          "name": "Position",
+          "description": "Target position (0-100%)."
+        },
+        "delay": {
+          "name": "Delay",
+          "description": "Delay before starting movement (seconds)."
+        }
+      }
+    },
+    "absolute_move": {
+      "name": "Absolute Move",
+      "description": "Move the motor to a specific absolute position using encoder values.",
+      "fields": {
+        "position": {
+          "name": "Absolute Position",
+          "description": "Target encoder position (0-65536)."
+        },
+        "delay": {
+          "name": "Delay",
+          "description": "Delay before starting movement (milliseconds)."
+        }
+      }
+    },
+    "get_status": {
+      "name": "Get Status",
+      "description": "Get full motor status for diagnostics (check logs for output)."
+    }
+  }
+}

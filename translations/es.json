@@ -1,0 +1,90 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuración del Motor RENKEI PoE",
+        "description": "Configure su conexión de motor RENKEI PoE.",
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "La dirección IP de su RENKEI PoE"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Motor Dendo RENKEI PoE Descubierto",
+        "description": "Se ha descubierto un motor Dendo RENKEI PoE en su red. ¿Desea agregarlo?"
+      },
+      "reconfigure": {
+        "title": "Reconfigurar Motor RENKEI PoE",
+        "description": "Actualizar la configuración de este motor RENKEI PoE.",
+        "data": {
+          "host": "Host"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Error al conectar con el motor. Verifique la dirección IP y el puerto.",
+      "invalid_host": "Formato de dirección IP inválido.",
+      "timeout": "Tiempo de conexión agotado. Verifique si el motor está en línea.",
+      "unknown": "Ocurrió un error desconocido.",
+      "already_configured": "Este motor ya está configurado."
+    },
+    "abort": {
+      "already_configured": "Este motor ya está configurado.",
+      "already_in_progress": "La configuración de este motor ya está en progreso.",
+      "cannot_connect": "No se pudo conectar al motor."
+    }
+  },
+  "entity": {
+    "cover": {
+      "shade": {
+        "name": "Motor"
+      }
+    }
+  },
+  "services": {
+    "jog": {
+      "name": "Mover Motor",
+      "description": "Mover el motor brevemente para identificación.",
+      "fields": {
+        "count": {
+          "name": "Cantidad de Movimientos",
+          "description": "Número de veces que mover el motor (1-10)."
+        }
+      }
+    },
+    "set_position": {
+      "name": "Establecer Posición",
+      "description": "Mover el motor a una posición específica con retraso opcional.",
+      "fields": {
+        "position": {
+          "name": "Posición",
+          "description": "Posición objetivo (0-100%)."
+        },
+        "delay": {
+          "name": "Retraso",
+          "description": "Retraso antes de iniciar el movimiento (segundos)."
+        }
+      }
+    },
+    "absolute_move": {
+      "name": "Movimiento Absoluto",
+      "description": "Mover el motor a una posición absoluta específica usando valores del codificador.",
+      "fields": {
+        "position": {
+          "name": "Posición Absoluta",
+          "description": "Posición objetivo del codificador (0-65536)."
+        },
+        "delay": {
+          "name": "Retraso",
+          "description": "Retraso antes de iniciar el movimiento (milisegundos)."
+        }
+      }
+    },
+    "get_status": {
+      "name": "Obtener Estado",
+      "description": "Obtener el estado completo del motor para diagnósticos (revisar logs para la salida)."
+    }
+  }
+}

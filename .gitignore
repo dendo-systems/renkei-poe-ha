@@ -1,0 +1,17 @@
+# Ignore entire docs directory
+docs/
+
+# Ignore Zone.Identifier files
+*:Zone.Identifier
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore log files
+*.log

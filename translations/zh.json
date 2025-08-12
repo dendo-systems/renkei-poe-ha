@@ -1,0 +1,90 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RENKEI PoE 电机设置",
+        "description": "配置您的 RENKEI PoE 电机连接。",
+        "data": {
+          "host": "主机"
+        },
+        "data_description": {
+          "host": "您的 RENKEI PoE 的 IP 地址"
+        }
+      },
+      "discovery_confirm": {
+        "title": "发现 Dendo RENKEI PoE 电机",
+        "description": "在您的网络上发现了一个 Dendo RENKEI PoE 电机。您想要添加它吗？"
+      },
+      "reconfigure": {
+        "title": "重新配置 RENKEI PoE 电机",
+        "description": "更新此 RENKEI PoE 电机的配置。",
+        "data": {
+          "host": "主机"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "连接电机失败。请检查 IP 地址和端口。",
+      "invalid_host": "无效的 IP 地址格式。",
+      "timeout": "连接超时。请检查电机是否在线。",
+      "unknown": "发生未知错误。",
+      "already_configured": "此电机已配置。"
+    },
+    "abort": {
+      "already_configured": "此电机已配置。",
+      "already_in_progress": "此电机的配置已在进行中。",
+      "cannot_connect": "无法连接到电机。"
+    }
+  },
+  "entity": {
+    "cover": {
+      "shade": {
+        "name": "电机"
+      }
+    }
+  },
+  "services": {
+    "jog": {
+      "name": "点动电机",
+      "description": "为识别目的短暂移动电机。",
+      "fields": {
+        "count": {
+          "name": "点动次数",
+          "description": "点动电机的次数（1-10）。"
+        }
+      }
+    },
+    "set_position": {
+      "name": "设置位置",
+      "description": "将电机移动到特定位置，可选延迟。",
+      "fields": {
+        "position": {
+          "name": "位置",
+          "description": "目标位置（0-100%）。"
+        },
+        "delay": {
+          "name": "延迟",
+          "description": "开始移动前的延迟（秒）。"
+        }
+      }
+    },
+    "absolute_move": {
+      "name": "绝对移动",
+      "description": "使用编码器值将电机移动到特定的绝对位置。",
+      "fields": {
+        "position": {
+          "name": "绝对位置",
+          "description": "目标编码器位置（0-65536）。"
+        },
+        "delay": {
+          "name": "延迟",
+          "description": "开始移动前的延迟（毫秒）。"
+        }
+      }
+    },
+    "get_status": {
+      "name": "获取状态",
+      "description": "获取完整电机状态用于诊断（检查日志输出）。"
+    }
+  }
+}

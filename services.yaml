@@ -1,0 +1,71 @@
+jog:
+  name: Jog Motor
+  description: Jog the motor for identification purposes.
+  fields:
+    count:
+      name: Jog Count
+      description: Number of times to jog the motor (1-10).
+      example: 3
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 10
+
+set_position:
+  name: Set Position
+  description: Move the motor to a specific position with optional delay.
+  fields:
+    position:
+      name: Position
+      description: Target position (0-100%).
+      example: 75
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    delay:
+      name: Delay
+      description: Delay before starting movement (milliseconds).
+      example: 5
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 30
+          unit_of_measurement: "s"
+
+absolute_move:
+  name: Absolute Move
+  description: Move the motor to a specific absolute position using encoder values.
+  fields:
+    position:
+      name: Absolute Position
+      description: Target encoder position (0-65536).
+      example: 32768
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 65536
+          unit_of_measurement: "encoder"
+    delay:
+      name: Delay
+      description: Delay before starting movement (milliseconds).
+      example: 100
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 10000
+          unit_of_measurement: "ms"
+
+get_status:
+  name: Get Status
+  description: Get full motor status for diagnostics (check logs for output).
+
+get_info:
+  name: Get Info
+  description: Get network info for diagnostics (check logs for output).

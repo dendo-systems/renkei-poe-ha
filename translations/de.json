@@ -1,0 +1,90 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RENKEI PoE Motor-Setup",
+        "description": "Konfigurieren Sie Ihre RENKEI PoE Motor-Verbindung.",
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "Die IP-Adresse Ihres RENKEI PoE"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Dendo RENKEI PoE Motor entdeckt",
+        "description": "Ein Dendo RENKEI PoE Motor wurde in Ihrem Netzwerk entdeckt. Möchten Sie ihn hinzufügen?"
+      },
+      "reconfigure": {
+        "title": "RENKEI PoE Motor neu konfigurieren",
+        "description": "Aktualisieren Sie die Konfiguration für diesen RENKEI PoE Motor.",
+        "data": {
+          "host": "Host"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zum Motor fehlgeschlagen. Bitte überprüfen Sie die IP-Adresse und den Port.",
+      "invalid_host": "Ungültiges IP-Adressenformat.",
+      "timeout": "Verbindungszeitüberschreitung. Bitte prüfen Sie, ob der Motor online ist.",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten.",
+      "already_configured": "Dieser Motor ist bereits konfiguriert."
+    },
+    "abort": {
+      "already_configured": "Dieser Motor ist bereits konfiguriert.",
+      "already_in_progress": "Die Konfiguration für diesen Motor ist bereits in Bearbeitung.",
+      "cannot_connect": "Konnte keine Verbindung zum Motor herstellen."
+    }
+  },
+  "entity": {
+    "cover": {
+      "shade": {
+        "name": "Motor"
+      }
+    }
+  },
+  "services": {
+    "jog": {
+      "name": "Motor ruckeln",
+      "description": "Den Motor zur Identifizierung ruckeln lassen.",
+      "fields": {
+        "count": {
+          "name": "Ruckel-Anzahl",
+          "description": "Anzahl der Ruckel-Bewegungen des Motors (1-10)."
+        }
+      }
+    },
+    "set_position": {
+      "name": "Position setzen",
+      "description": "Den Motor zu einer bestimmten Position mit optionaler Verzögerung bewegen.",
+      "fields": {
+        "position": {
+          "name": "Position",
+          "description": "Zielposition (0-100%)."
+        },
+        "delay": {
+          "name": "Verzögerung",
+          "description": "Verzögerung vor Start der Bewegung (Sekunden)."
+        }
+      }
+    },
+    "absolute_move": {
+      "name": "Absolute Bewegung",
+      "description": "Den Motor zu einer bestimmten absoluten Position mit Encoder-Werten bewegen.",
+      "fields": {
+        "position": {
+          "name": "Absolute Position",
+          "description": "Ziel-Encoder-Position (0-65536)."
+        },
+        "delay": {
+          "name": "Verzögerung",
+          "description": "Verzögerung vor Start der Bewegung (Millisekunden)."
+        }
+      }
+    },
+    "get_status": {
+      "name": "Status abrufen",
+      "description": "Vollständigen Motorstatus für Diagnose abrufen (Ausgabe in Logs prüfen)."
+    }
+  }
+}
