@@ -4,13 +4,13 @@ jog:
   fields:
     count:
       name: Jog Count
-      description: Number of times to jog the motor (1-10).
+      description: Number of times to jog the motor (1-5).
       example: 3
       default: 1
       selector:
         number:
           min: 1
-          max: 10
+          max: 5
 
 set_position:
   name: Set Position

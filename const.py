@@ -76,61 +76,24 @@ SERVICE_ABSOLUTE_MOVE = "absolute_move"
 SERVICE_GET_STATUS = "get_status"
 SERVICE_GET_INFO = "get_info"
 
-# Service schemas
+# Service schemas (Voluptuous format for Home Assistant)
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
+
 SERVICE_JOG_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "count": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 10,
-            "default": 1
-        }
-    }
+    vol.Optional("count", default=1): vol.All(vol.Coerce(int), vol.Range(min=1, max=5))
 }
 
 SERVICE_SET_POSITION_SCHEMA = {
-    "type": "object", 
-    "properties": {
-        "position": {
-            "type": "integer",
-            "minimum": MIN_POSITION,
-            "maximum": MAX_POSITION
-        },
-        "delay": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 30,
-            "default": 0
-        }
-    },
-    "required": ["position"]
+    vol.Required("position"): vol.All(vol.Coerce(int), vol.Range(min=MIN_POSITION, max=MAX_POSITION)),
+    vol.Optional("delay", default=0): vol.All(vol.Coerce(int), vol.Range(min=0, max=30))
 }
 
 SERVICE_ABSOLUTE_MOVE_SCHEMA = {
-    "type": "object", 
-    "properties": {
-        "position": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 65536
-        },
-        "delay": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 65535,
-            "default": 0
-        }
-    },
-    "required": ["position"]
+    vol.Required("position"): vol.All(vol.Coerce(int), vol.Range(min=0, max=65536)),
+    vol.Optional("delay", default=0): vol.All(vol.Coerce(int), vol.Range(min=0, max=65535))
 }
 
-SERVICE_GET_STATUS_SCHEMA = {
-    "type": "object",
-    "properties": {}
-}
+SERVICE_GET_STATUS_SCHEMA = {}
 
-SERVICE_GET_INFO_SCHEMA = {
-    "type": "object",
-    "properties": {}
-}
+SERVICE_GET_INFO_SCHEMA = {}
