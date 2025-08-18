@@ -27,7 +27,7 @@ from .const import (
     MAX_POSITION,
     MIN_POSITION,
 )
-from .renkei_client import RenkeiConnectionError
+from .renkei_client import RenkeiConnectionError, ConnectionState
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -100,10 +100,12 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
         
         # Register for real-time updates
         coordinator.add_status_listener(self._handle_status_update)
+        coordinator.add_connection_listener(self._handle_connection_state)
 
     async def async_will_remove_from_hass(self) -> None:
         """Clean up when entity is removed."""
         self.coordinator.remove_status_listener(self._handle_status_update)
+        self.coordinator.remove_connection_listener(self._handle_connection_state)
         await super().async_will_remove_from_hass()
 
     @callback
@@ -174,6 +176,13 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
             
             self.async_write_ha_state()
 
+    @callback
+    def _handle_connection_state(self, state: ConnectionState) -> None:
+        """Handle connection state changes."""
+        if state == ConnectionState.CONNECTED:
+            # Reset absolute position cache when reconnected to force fresh data
+            self._absolute_position = None
+            _LOGGER.debug("Connection restored, cleared absolute position cache")
 
     @property
     def available(self) -> bool:
