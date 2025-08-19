@@ -94,9 +94,7 @@ async def _get_translated_exception(hass: HomeAssistant, key: str, **kwargs) -> 
             "failed_to_set_position": "Failed to set position: {error}",
             "failed_to_move_to_absolute_position": "Failed to move to absolute position: {error}",
             "failed_to_get_motor_status": "Failed to get motor status: {error}",
-            "failed_to_get_status": "Failed to get status: {error}",
             "failed_to_get_motor_info": "Failed to get motor info: {error}",
-            "failed_to_get_info": "Failed to get info: {error}",
             "position_required": "Position is required",
             "failed_to_stop_motor": "Failed to stop motor: {error}",
             "unexpected_error": "Unexpected error: {error}",
@@ -152,7 +150,7 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
                 message = await _get_translated_exception(hass, "failed_to_get_motor_status", error="No status data received")
                 raise ServiceValidationError(message)
         except Exception as exc:
-            message = await _get_translated_exception(hass, "failed_to_get_status", error=str(exc))
+            message = await _get_translated_exception(hass, "failed_to_get_motor_status", error=str(exc))
             raise ServiceValidationError(message) from exc
     
     async def async_get_info(call: ServiceCall) -> None:
@@ -165,7 +163,7 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
                 message = await _get_translated_exception(hass, "failed_to_get_motor_info", error="No info data received")
                 raise ServiceValidationError(message)
         except Exception as exc:
-            message = await _get_translated_exception(hass, "failed_to_get_info", error=str(exc))
+            message = await _get_translated_exception(hass, "failed_to_get_motor_info", error=str(exc))
             raise ServiceValidationError(message) from exc
     
     # Register services (only register once globally)
