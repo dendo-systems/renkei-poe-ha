@@ -159,9 +159,9 @@ python3 -m pytest tests/ --cov=custom_components/renkei_poe --cov-report=html
 
 6. **Commit your changes** with descriptive commit messages:
    ```bash
-   git commit -m "feat: add support for motor speed control"
+   git commit -m "Add support for motor speed control"
    # or
-   git commit -m "fix: handle connection timeout in status updates"
+   git commit -m "Fix connection timeout in status updates"
    ```
 
 7. **Push to your fork** and create a pull request:
@@ -179,14 +179,16 @@ python3 -m pytest tests/ --cov=custom_components/renkei_poe --cov-report=html
 
 ### Commit Message Format
 
-We use conventional commit format:
+We use descriptive commit messages that clearly explain the change:
 
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation changes
-- `test:` - Test additions or modifications
-- `refactor:` - Code refactoring
-- `style:` - Code style changes (formatting, etc.)
+- **New features**: "Add support for motor speed control"
+- **Bug fixes**: "Fix connection timeout in status updates"
+- **Documentation**: "Update contributing guidelines"
+- **Tests**: "Add tests for config flow validation"
+- **Refactoring**: "Refactor client connection handling"
+- **Releases**: "Release v1.0.5 - Documentation Update"
+
+Use present tense and start with a capital letter. Be descriptive about what the change accomplishes.
 
 ## Issue Guidelines
 
@@ -291,7 +293,7 @@ Follow these Home Assistant patterns:
 
 ### Testing with Real Hardware
 
-When testing with actual RENKEI motors:
+When testing with actual RENKEI PoE motors:
 
 1. **Use a test network** to avoid disrupting production systems
 2. **Document network setup** (IP addresses, VLANs, etc.)
