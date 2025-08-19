@@ -93,9 +93,9 @@ async def _get_translated_exception(hass: HomeAssistant, key: str, **kwargs) -> 
             "failed_to_jog_motor": "Failed to jog motor: {error}",
             "failed_to_set_position": "Failed to set position: {error}",
             "failed_to_move_to_absolute_position": "Failed to move to absolute position: {error}",
-            "failed_to_get_motor_status": "Failed to get motor status",
+            "failed_to_get_motor_status": "Failed to get motor status: {error}",
             "failed_to_get_status": "Failed to get status: {error}",
-            "failed_to_get_motor_info": "Failed to get motor info",
+            "failed_to_get_motor_info": "Failed to get motor info: {error}",
             "failed_to_get_info": "Failed to get info: {error}",
             "position_required": "Position is required",
             "failed_to_stop_motor": "Failed to stop motor: {error}",
@@ -149,7 +149,7 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
             if status:
                 _LOGGER.info("Full motor status: %s", status)
             else:
-                message = await _get_translated_exception(hass, "failed_to_get_motor_status")
+                message = await _get_translated_exception(hass, "failed_to_get_motor_status", error="No status data received")
                 raise ServiceValidationError(message)
         except Exception as exc:
             message = await _get_translated_exception(hass, "failed_to_get_status", error=str(exc))
@@ -162,7 +162,7 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
             if info:
                 _LOGGER.info("Motor network info: %s", info)
             else:
-                message = await _get_translated_exception(hass, "failed_to_get_motor_info")
+                message = await _get_translated_exception(hass, "failed_to_get_motor_info", error="No info data received")
                 raise ServiceValidationError(message)
         except Exception as exc:
             message = await _get_translated_exception(hass, "failed_to_get_info", error=str(exc))
