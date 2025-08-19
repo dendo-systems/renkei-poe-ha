@@ -122,15 +122,15 @@
   "issues": {
     "deprecated_port_80": {
       "title": "Deprecated Port 80 Configuration",
-      "description": "Your RENKEI motor '{entry_title}' is configured to use port {current_port}, but RENKEI motors use port 17002 for communication. This configuration may cause connection issues.\n\nClick 'Submit' to automatically update to the correct port."
+      "description": "Your RENKEI motor {entry_title} is configured to use port {current_port}, but RENKEI motors use port 17002 for communication. This configuration may cause connection issues.\n\nClick Submit to automatically update to the correct port."
     },
     "connection_unstable": {
       "title": "Unstable Connection Detected",
-      "description": "Your RENKEI motor '{entry_title}' has reconnected {reconnect_count} times, indicating an unstable network connection.\n\nClick 'Submit' to apply more conservative connection settings that may improve stability."
+      "description": "Your RENKEI motor {entry_title} has reconnected {reconnect_count} times, indicating an unstable network connection.\n\nClick Submit to apply more conservative connection settings that may improve stability."
     },
     "motor_error": {
       "title": "Motor Error Detected",
-      "description": "Your RENKEI motor '{entry_title}' reported error code {error_code}: {error_description}.\n\nThis may indicate a hardware issue that requires attention. Please check the motor installation and wiring."
+      "description": "Your RENKEI motor {entry_title} reported error code {error_code}: {error_description}.\n\nThis may indicate a hardware issue that requires attention. Please check the motor installation and wiring."
     }
   }
 }
