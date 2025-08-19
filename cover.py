@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from datetime import datetime
 from typing import Any
@@ -249,7 +248,6 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
             return {}
         
         status = self.coordinator.data.get("status", {})
-        connection_state = self.coordinator.data.get("connection_state")
         last_seen = self.coordinator.data.get("last_seen")
         
         attrs = {}
@@ -328,7 +326,7 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
         
         try:
             # Send move command
-            response = await self.coordinator.client.move(position=position)
+            await self.coordinator.client.move(position=position)
             
             # Clear any previous errors on successful command
             self._current_error = None

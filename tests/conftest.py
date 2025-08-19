@@ -80,7 +80,6 @@ def mock_config_entry_data():
 def mock_config_entry(mock_config_entry_data):
     """Mock config entry."""
     from homeassistant.config_entries import ConfigEntry
-    from homeassistant.data_entry_flow import FlowResultType
     
     entry = MagicMock(spec=ConfigEntry)
     entry.entry_id = "test_entry_id"

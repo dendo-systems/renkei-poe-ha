@@ -1,0 +1,8 @@
+{
+  "name": "Renkei PoE Motor",
+  "content_in_root": false,
+  "filename": "renkei_poe.zip",
+  "homeassistant": "2024.1.0",
+  "render_readme": true,
+  "zip_release": true
+}

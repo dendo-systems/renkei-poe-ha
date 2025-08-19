@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.components import repairs
 from homeassistant.exceptions import ConfigEntryNotReady, ServiceValidationError
 from homeassistant.helpers.translation import async_get_translations
-import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 
 from .const import (
@@ -28,7 +26,7 @@ from .const import (
     SERVICE_GET_INFO_SCHEMA,
 )
 from .coordinator import RenkeiCoordinator
-from .renkei_client import RenkeiConnectionError
+from .renkei_client import RenkeiConnectionError as RenkeiConnectionError
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -12,7 +12,6 @@ from homeassistant.components import zeroconf
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import config_validation as cv
 from homeassistant.util.network import is_ip_address
 
 from .const import (
@@ -177,7 +176,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle zeroconf discovery."""
         host = discovery_info.host
-        port = discovery_info.port or DEFAULT_PORT
         hostname = discovery_info.hostname
         
         # Only handle RENKEI PoE devices

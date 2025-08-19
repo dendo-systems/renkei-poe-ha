@@ -3,12 +3,10 @@
 from unittest.mock import AsyncMock, patch
 import pytest
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
 from custom_components.renkei_poe import async_setup_entry, async_unload_entry
-from custom_components.renkei_poe.const import DOMAIN
 
 
 async def test_setup_entry(
@@ -131,11 +129,8 @@ async def test_service_calls(
     
     coordinator = mock_config_entry.runtime_data
     
-    # Test jog service
-    from homeassistant.core import ServiceCall
-    jog_call = ServiceCall(DOMAIN, "jog", {"count": 3})
-    
-    # This would be called by the actual service handler
+    # Test jog service by calling the client directly
+    # (actual service handlers would use the service call mechanism)
     await coordinator.client.jog(count=3)
     mock_renkei_client.jog.assert_called_with(count=3)
     

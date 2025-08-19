@@ -1,14 +1,11 @@
 """Test the RENKEI PoE Motor Control config flow."""
 
 import asyncio
-from unittest.mock import AsyncMock, patch
-import pytest
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
-from custom_components.renkei_poe.config_flow import ConfigFlow
 from custom_components.renkei_poe.const import DOMAIN, DEFAULT_PORT
 from custom_components.renkei_poe.renkei_client import RenkeiConnectionError
 

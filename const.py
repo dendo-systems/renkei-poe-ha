@@ -1,5 +1,6 @@
 """Constants for the RENKEI PoE Motor Control integration."""
 
+import voluptuous as vol
 from homeassistant.const import Platform
 
 DOMAIN = "renkei_poe"
@@ -77,8 +78,6 @@ SERVICE_GET_STATUS = "get_status"
 SERVICE_GET_INFO = "get_info"
 
 # Service schemas (Voluptuous format for Home Assistant)
-import homeassistant.helpers.config_validation as cv
-import voluptuous as vol
 
 SERVICE_JOG_SCHEMA = {
     vol.Optional("count", default=1): vol.All(vol.Coerce(int), vol.Range(min=1, max=5))

@@ -3,12 +3,9 @@
 from unittest.mock import AsyncMock, patch
 import pytest
 from homeassistant.components.cover import (
-    ATTR_POSITION,
     CoverDeviceClass,
     CoverEntityFeature,
 )
-from homeassistant.const import STATE_CLOSED, STATE_OPEN, STATE_UNAVAILABLE
-from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 
 from custom_components.renkei_poe.cover import RenkeiCover

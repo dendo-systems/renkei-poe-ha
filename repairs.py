@@ -9,7 +9,6 @@ from homeassistant.components.repairs import RepairsFlow
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
-from homeassistant.helpers.translation import async_get_translations
 
 from .const import DOMAIN
 
