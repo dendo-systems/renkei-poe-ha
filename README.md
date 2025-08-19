@@ -1,6 +1,6 @@
 # RENKEI PoE Motor Control Integration for Home Assistant
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+[![hacs_badge](https://img.shields.io/badge/HACS-Compatible-blue.svg)](https://hacs.xyz)
 [![License](https://img.shields.io/github/license/dendo-systems/renkei-poe-ha.svg)](LICENSE)
 [![Version](https://img.shields.io/github/v/release/dendo-systems/renkei-poe-ha)](https://github.com/dendo-systems/renkei-poe-ha/releases)
 
