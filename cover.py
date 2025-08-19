@@ -175,6 +175,15 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
             self._is_closing = False
             
             self.async_write_ha_state()
+            
+        elif message.get("response") == "GET_STATUS":
+            # Handle GET_STATUS responses - check if errors have cleared
+            err_flags = data.get("err_flags", 0)
+            if err_flags == 0 and self._current_error is not None:
+                # Error has cleared - remove error state
+                _LOGGER.debug("Motor error cleared (err_flags = 0)")
+                self._current_error = None
+                self.async_write_ha_state()
 
     @callback
     def _handle_connection_state(self, state: ConnectionState) -> None:
