@@ -4,10 +4,10 @@
   "codeowners": ["@dendo-systems"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/dendo-systems/renkei-poe-homeassistant",
+  "documentation": "https://github.com/dendo-systems/renkei-poe-ha",
   "homekit": {},
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/dendo-systems/renkei-poe-homeassistant/issues",
+  "issue_tracker": "https://github.com/dendo-systems/renkei-poe-ha/issues",
   "requirements": [],
   "version": "1.0.2",
   "zeroconf": [

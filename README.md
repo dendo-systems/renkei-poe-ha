@@ -1,8 +1,8 @@
 # RENKEI PoE Motor Control Integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
-[![License](https://img.shields.io/github/license/dendo-systems/renkei-poe-homeassistant.svg)](LICENSE)
-[![Version](https://img.shields.io/github/v/release/dendo-systems/renkei-poe-homeassistant)](https://github.com/dendo-systems/renkei-poe-homeassistant/releases)
+[![License](https://img.shields.io/github/license/dendo-systems/renkei-poe-ha.svg)](LICENSE)
+[![Version](https://img.shields.io/github/v/release/dendo-systems/renkei-poe-ha)](https://github.com/dendo-systems/renkei-poe-ha/releases)
 
 A Home Assistant integration for controlling RENKEI PoE motors from Dendo Systems.
 
@@ -45,7 +45,7 @@ This integration provides:
 
 ### Manual Installation
 
-1. **Download** the latest release from the [releases page](https://github.com/dendo-systems/renkei-poe-homeassistant/releases)
+1. **Download** the latest release from the [releases page](https://github.com/dendo-systems/renkei-poe-ha/releases)
 2. **Extract** the contents to your `custom_components` directory:
    ```
    config/custom_components/renkei_poe/
@@ -316,7 +316,7 @@ Integrate with weather services to automatically close coverings during storms o
 3. **Network Analysis**: Use `ping` and `telnet` to verify connectivity
 4. **Motor Reset**: Power cycle motor if communication is completely lost
 
-For additional support, check the [troubleshooting guide](TROUBLESHOOTING.md) or [report an issue](https://github.com/dendo-systems/renkei-poe-homeassistant/issues).
+For additional support, check the [troubleshooting guide](TROUBLESHOOTING.md) or [report an issue](https://github.com/dendo-systems/renkei-poe-ha/issues).
 
 ## Supported Functionality
 
@@ -376,9 +376,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- **Documentation**: [GitHub Wiki](https://github.com/dendo-systems/renkei-poe-homeassistant/wiki)
-- **Issues**: [Bug Reports & Feature Requests](https://github.com/dendo-systems/renkei-poe-homeassistant/issues)
-- **Discussions**: [Community Forum](https://github.com/dendo-systems/renkei-poe-homeassistant/discussions)
+- **Documentation**: [GitHub Wiki](https://github.com/dendo-systems/renkei-poe-ha/wiki)
+- **Issues**: [Bug Reports & Feature Requests](https://github.com/dendo-systems/renkei-poe-ha/issues)
+- **Discussions**: [Community Forum](https://github.com/dendo-systems/renkei-poe-ha/discussions)
 - **Dendo Systems**: [Official Website](https://dendosystems.com)
 
 ---
