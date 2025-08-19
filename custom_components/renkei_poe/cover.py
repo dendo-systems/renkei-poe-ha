@@ -16,7 +16,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.translation import async_get_translations
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import RenkeiCoordinator
@@ -31,24 +30,6 @@ from .renkei_client import RenkeiConnectionError, ConnectionState
 _LOGGER = logging.getLogger(__name__)
 
 
-async def _get_translated_exception(hass: HomeAssistant, key: str, **kwargs) -> str:
-    """Get translated exception message."""
-    try:
-        translations = await async_get_translations(hass, hass.config.language, "exceptions", {DOMAIN})
-        domain_translations = translations.get(DOMAIN, {}).get("exceptions", {})
-        message_template = domain_translations.get(key, key)
-        return message_template.format(**kwargs)
-    except Exception:
-        # Fallback to English/key if translation fails
-        fallback_messages = {
-            "position_required": "Position is required",
-            "failed_to_stop_motor": "Failed to stop motor: {error}",
-            "unexpected_error": "Unexpected error: {error}",
-            "position_out_of_range": "Position {position} is out of range ({min_position}-{max_position})",
-            "failed_to_move_motor": "Failed to move motor: {error}"
-        }
-        message_template = fallback_messages.get(key, key)
-        return message_template.format(**kwargs)
 
 
 async def async_setup_entry(
@@ -284,8 +265,10 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
         """Move the cover to a specific position."""
         position = kwargs.get(ATTR_POSITION)
         if position is None:
-            message = await _get_translated_exception(self._hass, "position_required")
-            raise ServiceValidationError(message)
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="position_required"
+            )
         
         await self._async_set_position(position)
 
@@ -293,14 +276,15 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
     async def _validate_position(self, position: int) -> None:
         """Validate position is within bounds."""
         if not MIN_POSITION <= position <= MAX_POSITION:
-            message = await _get_translated_exception(
-                self._hass, 
-                "position_out_of_range", 
-                position=position, 
-                min_position=MIN_POSITION, 
-                max_position=MAX_POSITION
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="position_out_of_range",
+                translation_placeholders={
+                    "position": position,
+                    "min_position": MIN_POSITION,
+                    "max_position": MAX_POSITION
+                }
             )
-            raise ServiceValidationError(message)
 
     async def async_stop_cover(self, **kwargs: Any) -> None:
         """Stop the cover."""
@@ -312,12 +296,18 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
             
             _LOGGER.debug("Stop command sent successfully")
         except RenkeiConnectionError as exc:
-            message = await _get_translated_exception(self._hass, "failed_to_stop_motor", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_stop_motor",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
         except Exception as exc:
             _LOGGER.error("Unexpected error stopping motor: %s", exc)
-            message = await _get_translated_exception(self._hass, "unexpected_error", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="unexpected_error",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
 
     async def _async_set_position(self, position: int) -> None:
         """Set cover position."""
@@ -336,9 +326,15 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
             # Position will be updated via CURRENT_POS events
             
         except RenkeiConnectionError as exc:
-            message = await _get_translated_exception(self._hass, "failed_to_move_motor", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_move_motor",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
         except Exception as exc:
             _LOGGER.error("Unexpected error moving motor: %s", exc)
-            message = await _get_translated_exception(self._hass, "unexpected_error", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="unexpected_error",
+                translation_placeholders={"error": str(exc)}
+            ) from exc

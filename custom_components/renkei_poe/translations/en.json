@@ -88,16 +88,36 @@
     }
   },
   "exceptions": {
-    "failed_to_jog_motor": "Failed to jog motor: {error}",
-    "failed_to_set_position": "Failed to set position: {error}",
-    "failed_to_move_to_absolute_position": "Failed to move to absolute position: {error}",
-    "failed_to_get_motor_status": "Failed to get motor status: {error}",
-    "failed_to_get_motor_info": "Failed to get motor info: {error}",
-    "position_required": "Position is required",
-    "failed_to_stop_motor": "Failed to stop motor: {error}",
-    "unexpected_error": "Unexpected error: {error}",
-    "position_out_of_range": "Position {position} is out of range ({min_position}-{max_position})",
-    "failed_to_move_motor": "Failed to move motor: {error}"
+    "failed_to_jog_motor": {
+      "message": "Failed to jog motor: {error}"
+    },
+    "failed_to_set_position": {
+      "message": "Failed to set position: {error}"
+    },
+    "failed_to_move_to_absolute_position": {
+      "message": "Failed to move to absolute position: {error}"
+    },
+    "failed_to_get_motor_status": {
+      "message": "Failed to get motor status: {error}"
+    },
+    "failed_to_get_motor_info": {
+      "message": "Failed to get motor info: {error}"
+    },
+    "position_required": {
+      "message": "Position is required"
+    },
+    "failed_to_stop_motor": {
+      "message": "Failed to stop motor: {error}"
+    },
+    "unexpected_error": {
+      "message": "Unexpected error: {error}"
+    },
+    "position_out_of_range": {
+      "message": "Position {position} is out of range ({min_position}-{max_position})"
+    },
+    "failed_to_move_motor": {
+      "message": "Failed to move motor: {error}"
+    }
   },
   "issues": {
     "deprecated_port_80": {

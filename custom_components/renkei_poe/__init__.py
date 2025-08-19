@@ -8,7 +8,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.components import repairs
 from homeassistant.exceptions import ConfigEntryNotReady, ServiceValidationError
-from homeassistant.helpers.translation import async_get_translations
 import voluptuous as vol
 
 from .const import (
@@ -80,30 +79,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
-async def _get_translated_exception(hass: HomeAssistant, key: str, **kwargs) -> str:
-    """Get translated exception message."""
-    try:
-        translations = await async_get_translations(hass, hass.config.language, "exceptions", {DOMAIN})
-        domain_translations = translations.get(DOMAIN, {}).get("exceptions", {})
-        message_template = domain_translations.get(key, key)
-        return message_template.format(**kwargs)
-    except Exception:
-        # Fallback to English/key if translation fails
-        fallback_messages = {
-            "failed_to_jog_motor": "Failed to jog motor: {error}",
-            "failed_to_set_position": "Failed to set position: {error}",
-            "failed_to_move_to_absolute_position": "Failed to move to absolute position: {error}",
-            "failed_to_get_motor_status": "Failed to get motor status: {error}",
-            "failed_to_get_motor_info": "Failed to get motor info: {error}",
-            "position_required": "Position is required",
-            "failed_to_stop_motor": "Failed to stop motor: {error}",
-            "unexpected_error": "Unexpected error: {error}",
-            "position_out_of_range": "Position {position} is out of range ({min_position}-{max_position})",
-            "failed_to_move_motor": "Failed to move motor: {error}"
-        }
-        message_template = fallback_messages.get(key, key)
-        return message_template.format(**kwargs)
-
 
 async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoordinator) -> None:
     """Register integration services."""
@@ -115,8 +90,11 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
         try:
             await coordinator.client.jog(count=count)
         except Exception as exc:
-            message = await _get_translated_exception(hass, "failed_to_jog_motor", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_jog_motor",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
     
     async def async_set_position(call: ServiceCall) -> None:
         """Service to set motor position with optional delay."""
@@ -126,8 +104,11 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
         try:
             await coordinator.client.move(position=position, delay=delay)
         except Exception as exc:
-            message = await _get_translated_exception(hass, "failed_to_set_position", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_set_position",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
     
     async def async_absolute_move(call: ServiceCall) -> None:
         """Service to move motor to absolute position (encoder value)."""
@@ -137,8 +118,11 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
         try:
             await coordinator.client.absolute_move(position=position, delay=delay)
         except Exception as exc:
-            message = await _get_translated_exception(hass, "failed_to_move_to_absolute_position", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_move_to_absolute_position",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
     
     async def async_get_status(call: ServiceCall) -> None:
         """Service to get full motor status for diagnostics."""
@@ -147,11 +131,17 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
             if status:
                 _LOGGER.info("Full motor status: %s", status)
             else:
-                message = await _get_translated_exception(hass, "failed_to_get_motor_status", error="No status data received")
-                raise ServiceValidationError(message)
+                raise ServiceValidationError(
+                    translation_domain=DOMAIN,
+                    translation_key="failed_to_get_motor_status",
+                    translation_placeholders={"error": "No status data received"}
+                )
         except Exception as exc:
-            message = await _get_translated_exception(hass, "failed_to_get_motor_status", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_get_motor_status",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
     
     async def async_get_info(call: ServiceCall) -> None:
         """Service to get network info for diagnostics."""
@@ -160,11 +150,17 @@ async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoord
             if info:
                 _LOGGER.info("Motor network info: %s", info)
             else:
-                message = await _get_translated_exception(hass, "failed_to_get_motor_info", error="No info data received")
-                raise ServiceValidationError(message)
+                raise ServiceValidationError(
+                    translation_domain=DOMAIN,
+                    translation_key="failed_to_get_motor_info",
+                    translation_placeholders={"error": "No info data received"}
+                )
         except Exception as exc:
-            message = await _get_translated_exception(hass, "failed_to_get_motor_info", error=str(exc))
-            raise ServiceValidationError(message) from exc
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_get_motor_info",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
     
     # Register services (only register once globally)
     if not hass.services.has_service(DOMAIN, SERVICE_JOG):
