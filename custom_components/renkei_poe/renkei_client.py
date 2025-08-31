@@ -93,6 +93,13 @@ class RenkeiClient:
                     timeout=5.0
                 )
                 
+                # Disable Nagle's algorithm for better motor responsiveness
+                if self.writer:
+                    sock = self.writer.get_extra_info('socket')
+                    if sock:
+                        sock.setsockopt(asyncio.socket.IPPROTO_TCP, asyncio.socket.TCP_NODELAY, 1)
+                        _LOGGER.debug("TCP_NODELAY enabled for improved motor responsiveness")
+                
                 self._set_state(ConnectionState.CONNECTED)
                 _LOGGER.info(f"Connected to {self.host}:{self.port}")
                 
