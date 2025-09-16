@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import json
+import socket
 from datetime import datetime
 from typing import Optional, Callable, Dict, Any
 from enum import Enum
@@ -97,7 +98,7 @@ class RenkeiClient:
                 if self.writer:
                     sock = self.writer.get_extra_info('socket')
                     if sock:
-                        sock.setsockopt(asyncio.socket.IPPROTO_TCP, asyncio.socket.TCP_NODELAY, 1)
+                        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
                         _LOGGER.debug("TCP_NODELAY enabled for improved motor responsiveness")
                 
                 self._set_state(ConnectionState.CONNECTED)
