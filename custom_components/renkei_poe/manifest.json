@@ -1,6 +1,6 @@
 {
   "domain": "renkei_poe",
-  "name": "Renkei PoE Motor",
+  "name": "BTX",
   "codeowners": ["@dendo-systems"],
   "config_flow": true,
   "dependencies": [],

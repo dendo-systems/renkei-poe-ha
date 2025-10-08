@@ -26,8 +26,8 @@ CONF_HEALTH_CHECK_INTERVAL = "health_check_interval"
 CONF_CONNECTION_STABILISE_DELAY = "connection_stabilise_delay"
 
 # Device information
-MANUFACTURER = "Dendo Systems Pty Ltd"
-MODEL = "RENKEI PoE Motor"
+MANUFACTURER = "BTX Window Automation, Inc."
+MODEL = "BTX PoE Motor"
 
 # mDNS/Zeroconf constants
 ZEROCONF_TYPE = "_dendo._tcp.local."
