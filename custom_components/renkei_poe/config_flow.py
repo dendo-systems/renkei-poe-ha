@@ -223,7 +223,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             title = info["title"]
         except Exception:
             # Fallback to host-based naming if validation fails
-            title = f"RENKEI PoE Motor ({self.discovery_info[CONF_HOST]})"
+            title = f"BTX PoE ({self.discovery_info[CONF_HOST]})"
         
         return self.async_create_entry(
             title=title,

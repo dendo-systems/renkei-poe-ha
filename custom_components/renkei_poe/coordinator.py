@@ -32,8 +32,8 @@ def _generate_device_name(mac_address: str) -> str:
     mac_clean = mac_address.replace(":", "").upper()
     if len(mac_clean) >= 6:
         suffix = mac_clean[-6:]  # Last 3 bytes
-        return f"RENKEI PoE {suffix}"
-    return f"RENKEI PoE {mac_clean}"
+        return f"BTX PoE {suffix}"
+    return f"BTX PoE {mac_clean}"
 
 
 class RenkeiCoordinator(DataUpdateCoordinator[dict[str, Any]]):

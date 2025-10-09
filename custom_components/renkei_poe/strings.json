@@ -3,21 +3,21 @@
     "step": {
       "user": {
         "title": "RENKEI PoE Motor Setup",
-        "description": "Configure your RENKEI PoE motor connection.",
+        "description": "Configure your BTX PoE motor connection.",
         "data": {
           "host": "Host"
         },
         "data_description": {
-          "host": "The IP address of your RENKEI PoE motor"
+          "host": "The IP address of your BTX PoE motor"
         }
       },
       "discovery_confirm": {
         "title": "Discovered Dendo RENKEI PoE Motor",
-        "description": "A Dendo RENKEI PoE motor was discovered on your network. Would you like to add it?"
+        "description": "A BTX PoE motor was discovered on your network. Would you like to add it?"
       },
       "reconfigure": {
         "title": "Reconfigure RENKEI PoE Motor",
-        "description": "Update the configuration for this RENKEI PoE motor.",
+        "description": "Update the configuration for this BTX PoE motor.",
         "data": {
           "host": "Host"
         }
