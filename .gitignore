@@ -18,3 +18,4 @@ __pycache__/
 
 # Ignore Claude Code settings
 .claude/
+CLAUDE.md
