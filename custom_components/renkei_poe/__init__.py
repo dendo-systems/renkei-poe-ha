@@ -10,6 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.components import repairs
 from homeassistant.exceptions import ConfigEntryNotReady
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers import service
 from homeassistant.helpers.typing import ConfigType
 
@@ -30,6 +31,8 @@ from .const import (
 from .coordinator import RenkeiCoordinator
 
 _LOGGER = logging.getLogger(__name__)
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
