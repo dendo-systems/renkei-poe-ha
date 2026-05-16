@@ -28,12 +28,31 @@
       "invalid_host": "Ungültiges IP-Adressenformat.",
       "timeout": "Verbindungszeitüberschreitung. Bitte prüfen Sie, ob der Motor online ist.",
       "unknown": "Ein unbekannter Fehler ist aufgetreten.",
-      "already_configured": "Dieser Motor ist bereits konfiguriert."
+      "already_configured": "Dieser Motor ist bereits konfiguriert.",
+      "wrong_device": "Der Motor unter dieser IP-Adresse ist ein anderes Gerät."
     },
     "abort": {
       "already_configured": "Dieser Motor ist bereits konfiguriert.",
       "already_in_progress": "Die Konfiguration für diesen Motor ist bereits in Bearbeitung.",
       "cannot_connect": "Konnte keine Verbindung zum Motor herstellen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RENKEI PoE Motor-Optionen",
+        "description": "Verbindungsverhalten für diesen Motor anpassen.",
+        "data": {
+          "reconnect_interval": "Wiederverbindungsintervall",
+          "health_check_interval": "Integritätsprüfungsintervall",
+          "connection_stabilise_delay": "Verbindungsstabilisierungsverzögerung"
+        },
+        "data_description": {
+          "reconnect_interval": "Sekunden zwischen Wiederverbindungsversuchen.",
+          "health_check_interval": "Sekunden zwischen Integritätsprüfungen. Auf 0 setzen, um sie zu deaktivieren.",
+          "connection_stabilise_delay": "Sekunden nach dem Verbinden warten, bevor Befehle gesendet werden."
+        }
+      }
     }
   },
   "entity": {
@@ -50,7 +69,7 @@
       "fields": {
         "count": {
           "name": "Ruckel-Anzahl",
-          "description": "Anzahl der Ruckel-Bewegungen des Motors (1-10)."
+          "description": "Anzahl der Ruckel-Bewegungen des Motors (1-5)."
         }
       }
     },
@@ -85,6 +104,10 @@
     "get_status": {
       "name": "Status abrufen",
       "description": "Vollständigen Motorstatus für Diagnose abrufen (Ausgabe in Logs prüfen)."
+    },
+    "get_info": {
+      "name": "Info abrufen",
+      "description": "Netzwerkinformationen für Diagnose abrufen (Ausgabe in Logs prüfen)."
     }
   }
 }

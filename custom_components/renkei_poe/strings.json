@@ -28,12 +28,31 @@
       "invalid_host": "Invalid IP address format.",
       "timeout": "Connection timeout. Please check if the motor is online.",
       "unknown": "An unknown error occurred.",
-      "already_configured": "This motor is already configured."
+      "already_configured": "This motor is already configured.",
+      "wrong_device": "The motor at this IP address is a different device."
     },
     "abort": {
       "already_configured": "This motor is already configured.",
       "already_in_progress": "Configuration for this motor is already in progress.",
       "cannot_connect": "Could not connect to the motor."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RENKEI PoE Motor Options",
+        "description": "Adjust connection behaviour for this motor.",
+        "data": {
+          "reconnect_interval": "Reconnect interval",
+          "health_check_interval": "Health check interval",
+          "connection_stabilise_delay": "Connection stabilisation delay"
+        },
+        "data_description": {
+          "reconnect_interval": "Seconds to wait between reconnection attempts.",
+          "health_check_interval": "Seconds between health checks. Set to 0 to disable.",
+          "connection_stabilise_delay": "Seconds to wait after connecting before sending commands."
+        }
+      }
     }
   },
   "entity": {
@@ -50,7 +69,7 @@
       "fields": {
         "count": {
           "name": "Jog Count",
-          "description": "Number of times to jog the motor (1-10)."
+          "description": "Number of times to jog the motor (1-5)."
         }
       }
     },
@@ -85,6 +104,10 @@
     "get_status": {
       "name": "Get Status",
       "description": "Get full motor status for diagnostics (check logs for output)."
+    },
+    "get_info": {
+      "name": "Get Info",
+      "description": "Get network info for diagnostics (check logs for output)."
     }
   }
 }

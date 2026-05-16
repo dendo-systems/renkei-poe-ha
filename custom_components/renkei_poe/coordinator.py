@@ -16,6 +16,10 @@ from .const import (
     CONF_CONNECTION_STABILISE_DELAY,
     CONF_HEALTH_CHECK_INTERVAL,
     CONF_RECONNECT_INTERVAL,
+    DEFAULT_CONNECTION_STABILISE_DELAY,
+    DEFAULT_HEALTH_CHECK_INTERVAL,
+    DEFAULT_PORT,
+    DEFAULT_RECONNECT_INTERVAL,
     DOMAIN,
     MANUFACTURER,
     MODEL,
@@ -46,12 +50,26 @@ class RenkeiCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     ) -> None:
         """Initialise the data update coordinator."""
         self.config_entry = config_entry
+        options = config_entry.options
+        data = config_entry.data
         self.client = RenkeiClient(
-            host=config_entry.data[CONF_HOST],
-            port=config_entry.data[CONF_PORT],
-            reconnect_interval=config_entry.data[CONF_RECONNECT_INTERVAL],
-            health_check_interval=config_entry.data[CONF_HEALTH_CHECK_INTERVAL],
-            connection_stabilise_delay=config_entry.data[CONF_CONNECTION_STABILISE_DELAY],
+            host=data[CONF_HOST],
+            port=data.get(CONF_PORT, DEFAULT_PORT),
+            reconnect_interval=options.get(
+                CONF_RECONNECT_INTERVAL,
+                data.get(CONF_RECONNECT_INTERVAL, DEFAULT_RECONNECT_INTERVAL),
+            ),
+            health_check_interval=options.get(
+                CONF_HEALTH_CHECK_INTERVAL,
+                data.get(CONF_HEALTH_CHECK_INTERVAL, DEFAULT_HEALTH_CHECK_INTERVAL),
+            ),
+            connection_stabilise_delay=options.get(
+                CONF_CONNECTION_STABILISE_DELAY,
+                data.get(
+                    CONF_CONNECTION_STABILISE_DELAY,
+                    DEFAULT_CONNECTION_STABILISE_DELAY,
+                ),
+            ),
         )
         
         self._device_info: DeviceInfo | None = None

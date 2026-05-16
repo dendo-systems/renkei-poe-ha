@@ -28,12 +28,31 @@
       "invalid_host": "Formato de dirección IP inválido.",
       "timeout": "Tiempo de conexión agotado. Verifique si el motor está en línea.",
       "unknown": "Ocurrió un error desconocido.",
-      "already_configured": "Este motor ya está configurado."
+      "already_configured": "Este motor ya está configurado.",
+      "wrong_device": "El motor en esta dirección IP es un dispositivo diferente."
     },
     "abort": {
       "already_configured": "Este motor ya está configurado.",
       "already_in_progress": "La configuración de este motor ya está en progreso.",
       "cannot_connect": "No se pudo conectar al motor."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones del Motor RENKEI PoE",
+        "description": "Ajustar el comportamiento de conexión para este motor.",
+        "data": {
+          "reconnect_interval": "Intervalo de reconexión",
+          "health_check_interval": "Intervalo de comprobación de estado",
+          "connection_stabilise_delay": "Retraso de estabilización de conexión"
+        },
+        "data_description": {
+          "reconnect_interval": "Segundos entre intentos de reconexión.",
+          "health_check_interval": "Segundos entre comprobaciones de estado. Establecer en 0 para desactivar.",
+          "connection_stabilise_delay": "Segundos de espera después de conectar antes de enviar comandos."
+        }
+      }
     }
   },
   "entity": {
@@ -50,7 +69,7 @@
       "fields": {
         "count": {
           "name": "Cantidad de Movimientos",
-          "description": "Número de veces que mover el motor (1-10)."
+          "description": "Número de veces que mover el motor (1-5)."
         }
       }
     },
@@ -85,6 +104,10 @@
     "get_status": {
       "name": "Obtener Estado",
       "description": "Obtener el estado completo del motor para diagnósticos (revisar logs para la salida)."
+    },
+    "get_info": {
+      "name": "Obtener Información",
+      "description": "Obtener información de red para diagnósticos (revisar logs para la salida)."
     }
   }
 }

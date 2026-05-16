@@ -309,14 +309,97 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
                 translation_placeholders={"error": str(exc)}
             ) from exc
 
-    async def _async_set_position(self, position: int) -> None:
+    async def async_jog_motor(self, count: int = 1) -> None:
+        """Jog the motor for identification."""
+        try:
+            await self.coordinator.client.jog(count=count)
+        except Exception as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_jog_motor",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
+
+    async def async_set_motor_position(self, position: int, delay: int = 0) -> None:
+        """Set motor position with an optional delay."""
+        await self._async_set_position(
+            position=position,
+            delay=delay,
+            error_translation_key="failed_to_set_position",
+        )
+
+    async def async_absolute_move(self, position: int, delay: int = 0) -> None:
+        """Move motor to an absolute encoder position."""
+        try:
+            await self.coordinator.client.absolute_move(position=position, delay=delay)
+            self._current_error = None
+            _LOGGER.debug(
+                "Absolute move command sent successfully to position %s", position
+            )
+        except Exception as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_move_to_absolute_position",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
+
+    async def async_get_motor_status(self) -> None:
+        """Get full motor status for diagnostics."""
+        try:
+            status = await self.coordinator.async_get_full_status()
+            if status:
+                _LOGGER.info("Full motor status for %s: %s", self.entity_id, status)
+                return
+
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_get_motor_status",
+                translation_placeholders={"error": "No status data received"}
+            )
+        except ServiceValidationError:
+            raise
+        except Exception as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_get_motor_status",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
+
+    async def async_get_motor_info(self) -> None:
+        """Get network info for diagnostics."""
+        try:
+            info = await self.coordinator.client.get_info()
+            if info:
+                _LOGGER.info("Motor network info for %s: %s", self.entity_id, info)
+                return
+
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_get_motor_info",
+                translation_placeholders={"error": "No info data received"}
+            )
+        except ServiceValidationError:
+            raise
+        except Exception as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="failed_to_get_motor_info",
+                translation_placeholders={"error": str(exc)}
+            ) from exc
+
+    async def _async_set_position(
+        self,
+        position: int,
+        delay: int = 0,
+        error_translation_key: str = "failed_to_move_motor",
+    ) -> None:
         """Set cover position."""
         # Validate position
         await self._validate_position(position)
         
         try:
             # Send move command
-            await self.coordinator.client.move(position=position)
+            await self.coordinator.client.move(position=position, delay=delay)
             
             # Clear any previous errors on successful command
             self._current_error = None
@@ -328,7 +411,7 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
         except RenkeiConnectionError as exc:
             raise ServiceValidationError(
                 translation_domain=DOMAIN,
-                translation_key="failed_to_move_motor",
+                translation_key=error_translation_key,
                 translation_placeholders={"error": str(exc)}
             ) from exc
         except Exception as exc:

@@ -1,6 +1,9 @@
 jog:
   name: Jog Motor
   description: Jog the motor for identification purposes.
+  target:
+    entity:
+      domain: cover
   fields:
     count:
       name: Jog Count
@@ -15,6 +18,9 @@ jog:
 set_position:
   name: Set Position
   description: Move the motor to a specific position with optional delay.
+  target:
+    entity:
+      domain: cover
   fields:
     position:
       name: Position
@@ -28,7 +34,7 @@ set_position:
           unit_of_measurement: "%"
     delay:
       name: Delay
-      description: Delay before starting movement (milliseconds).
+      description: Delay before starting movement (seconds).
       example: 5
       default: 0
       selector:
@@ -40,6 +46,9 @@ set_position:
 absolute_move:
   name: Absolute Move
   description: Move the motor to a specific absolute position using encoder values.
+  target:
+    entity:
+      domain: cover
   fields:
     position:
       name: Absolute Position
@@ -59,13 +68,19 @@ absolute_move:
       selector:
         number:
           min: 0
-          max: 10000
+          max: 65535
           unit_of_measurement: "ms"
 
 get_status:
   name: Get Status
   description: Get full motor status for diagnostics (check logs for output).
+  target:
+    entity:
+      domain: cover
 
 get_info:
   name: Get Info
   description: Get network info for diagnostics (check logs for output).
+  target:
+    entity:
+      domain: cover

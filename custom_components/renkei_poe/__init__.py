@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
+from homeassistant.components.cover import DOMAIN as COVER_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.components import repairs
-from homeassistant.exceptions import ConfigEntryNotReady, ServiceValidationError
-import voluptuous as vol
+from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import service
+from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     DOMAIN,
@@ -25,9 +28,14 @@ from .const import (
     SERVICE_GET_INFO_SCHEMA,
 )
 from .coordinator import RenkeiCoordinator
-from .renkei_client import RenkeiConnectionError as RenkeiConnectionError
 
 _LOGGER = logging.getLogger(__name__)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up the RENKEI PoE Motor Control integration."""
+    await _async_register_services(hass)
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -44,15 +52,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     
     # Store coordinator in config entry runtime data
     entry.runtime_data = coordinator
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     
     # Forward setup to platforms
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    
-    # Register services
-    await _async_register_services(hass, coordinator)
-    
-    # Repair flows are handled by the repairs module when issues are created
-    
+
     return True
 
 
@@ -63,144 +67,92 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         coordinator: RenkeiCoordinator = entry.runtime_data
         await coordinator.async_shutdown()
-        
-        # Check if any other RENKEI PoE entries exist before removing services
-        other_entries = [
-            e for e in hass.config_entries.async_entries(DOMAIN) 
-            if e.entry_id != entry.entry_id and e.state.recoverable
-        ]
-        if not other_entries:
-            hass.services.async_remove(DOMAIN, SERVICE_JOG)
-            hass.services.async_remove(DOMAIN, SERVICE_SET_POSITION)
-            hass.services.async_remove(DOMAIN, SERVICE_ABSOLUTE_MOVE)
-            hass.services.async_remove(DOMAIN, SERVICE_GET_STATUS)
-            hass.services.async_remove(DOMAIN, SERVICE_GET_INFO)
     
     return unload_ok
 
 
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload the config entry when options change."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
-async def _async_register_services(hass: HomeAssistant, coordinator: RenkeiCoordinator) -> None:
+
+async def _async_register_services(hass: HomeAssistant) -> None:
     """Register integration services."""
-    
-    async def async_jog_motor(call: ServiceCall) -> None:
+
+    async def async_jog_motor(entity: Any, call: ServiceCall) -> None:
         """Service to jog the motor for identification."""
-        count = call.data.get("count", 1)
-        
-        try:
-            await coordinator.client.jog(count=count)
-        except Exception as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="failed_to_jog_motor",
-                translation_placeholders={"error": str(exc)}
-            ) from exc
-    
-    async def async_set_position(call: ServiceCall) -> None:
+        await entity.async_jog_motor(count=call.data.get("count", 1))
+
+    async def async_set_position(entity: Any, call: ServiceCall) -> None:
         """Service to set motor position with optional delay."""
-        position = call.data["position"]
-        delay = call.data.get("delay", 0)
-        
-        try:
-            await coordinator.client.move(position=position, delay=delay)
-        except Exception as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="failed_to_set_position",
-                translation_placeholders={"error": str(exc)}
-            ) from exc
-    
-    async def async_absolute_move(call: ServiceCall) -> None:
+        await entity.async_set_motor_position(
+            position=call.data["position"],
+            delay=call.data.get("delay", 0),
+        )
+
+    async def async_absolute_move(entity: Any, call: ServiceCall) -> None:
         """Service to move motor to absolute position (encoder value)."""
-        position = call.data["position"]
-        delay = call.data.get("delay", 0)
-        
-        try:
-            await coordinator.client.absolute_move(position=position, delay=delay)
-        except Exception as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="failed_to_move_to_absolute_position",
-                translation_placeholders={"error": str(exc)}
-            ) from exc
-    
-    async def async_get_status(call: ServiceCall) -> None:
+        await entity.async_absolute_move(
+            position=call.data["position"],
+            delay=call.data.get("delay", 0),
+        )
+
+    async def async_get_status(entity: Any, call: ServiceCall) -> None:
         """Service to get full motor status for diagnostics."""
-        try:
-            status = await coordinator.async_get_full_status()
-            if status:
-                _LOGGER.info("Full motor status: %s", status)
-            else:
-                raise ServiceValidationError(
-                    translation_domain=DOMAIN,
-                    translation_key="failed_to_get_motor_status",
-                    translation_placeholders={"error": "No status data received"}
-                )
-        except Exception as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="failed_to_get_motor_status",
-                translation_placeholders={"error": str(exc)}
-            ) from exc
-    
-    async def async_get_info(call: ServiceCall) -> None:
+        await entity.async_get_motor_status()
+
+    async def async_get_info(entity: Any, call: ServiceCall) -> None:
         """Service to get network info for diagnostics."""
-        try:
-            info = await coordinator.client.get_info()
-            if info:
-                _LOGGER.info("Motor network info: %s", info)
-            else:
-                raise ServiceValidationError(
-                    translation_domain=DOMAIN,
-                    translation_key="failed_to_get_motor_info",
-                    translation_placeholders={"error": "No info data received"}
-                )
-        except Exception as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="failed_to_get_motor_info",
-                translation_placeholders={"error": str(exc)}
-            ) from exc
-    
-    # Register services (only register once globally)
+        await entity.async_get_motor_info()
+
     if not hass.services.has_service(DOMAIN, SERVICE_JOG):
-        hass.services.async_register(
+        service.async_register_platform_entity_service(
+            hass,
             DOMAIN,
             SERVICE_JOG,
-            async_jog_motor,
-            schema=vol.Schema(SERVICE_JOG_SCHEMA),
+            entity_domain=COVER_DOMAIN,
+            schema=SERVICE_JOG_SCHEMA,
+            func=async_jog_motor,
         )
     
     if not hass.services.has_service(DOMAIN, SERVICE_SET_POSITION):
-        hass.services.async_register(
+        service.async_register_platform_entity_service(
+            hass,
             DOMAIN,
             SERVICE_SET_POSITION,
-            async_set_position,
-            schema=vol.Schema(SERVICE_SET_POSITION_SCHEMA),
+            entity_domain=COVER_DOMAIN,
+            schema=SERVICE_SET_POSITION_SCHEMA,
+            func=async_set_position,
         )
     
     if not hass.services.has_service(DOMAIN, SERVICE_ABSOLUTE_MOVE):
-        hass.services.async_register(
+        service.async_register_platform_entity_service(
+            hass,
             DOMAIN,
             SERVICE_ABSOLUTE_MOVE,
-            async_absolute_move,
-            schema=vol.Schema(SERVICE_ABSOLUTE_MOVE_SCHEMA),
+            entity_domain=COVER_DOMAIN,
+            schema=SERVICE_ABSOLUTE_MOVE_SCHEMA,
+            func=async_absolute_move,
         )
         
     if not hass.services.has_service(DOMAIN, SERVICE_GET_STATUS):
-        hass.services.async_register(
+        service.async_register_platform_entity_service(
+            hass,
             DOMAIN,
             SERVICE_GET_STATUS,
-            async_get_status,
-            schema=vol.Schema(SERVICE_GET_STATUS_SCHEMA),
+            entity_domain=COVER_DOMAIN,
+            schema=SERVICE_GET_STATUS_SCHEMA,
+            func=async_get_status,
         )
     
     if not hass.services.has_service(DOMAIN, SERVICE_GET_INFO):
-        hass.services.async_register(
+        service.async_register_platform_entity_service(
+            hass,
             DOMAIN,
             SERVICE_GET_INFO,
-            async_get_info,
-            schema=vol.Schema(SERVICE_GET_INFO_SCHEMA),
+            entity_domain=COVER_DOMAIN,
+            schema=SERVICE_GET_INFO_SCHEMA,
+            func=async_get_info,
         )
 
 

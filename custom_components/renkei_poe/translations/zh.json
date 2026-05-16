@@ -28,12 +28,31 @@
       "invalid_host": "无效的 IP 地址格式。",
       "timeout": "连接超时。请检查电机是否在线。",
       "unknown": "发生未知错误。",
-      "already_configured": "此电机已配置。"
+      "already_configured": "此电机已配置。",
+      "wrong_device": "此 IP 地址上的电机是另一个设备。"
     },
     "abort": {
       "already_configured": "此电机已配置。",
       "already_in_progress": "此电机的配置已在进行中。",
       "cannot_connect": "无法连接到电机。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RENKEI PoE 电机选项",
+        "description": "调整此电机的连接行为。",
+        "data": {
+          "reconnect_interval": "重新连接间隔",
+          "health_check_interval": "健康检查间隔",
+          "connection_stabilise_delay": "连接稳定延迟"
+        },
+        "data_description": {
+          "reconnect_interval": "重新连接尝试之间等待的秒数。",
+          "health_check_interval": "健康检查之间的秒数。设为 0 可禁用。",
+          "connection_stabilise_delay": "连接后发送命令前等待的秒数。"
+        }
+      }
     }
   },
   "entity": {
@@ -50,7 +69,7 @@
       "fields": {
         "count": {
           "name": "点动次数",
-          "description": "点动电机的次数（1-10）。"
+          "description": "点动电机的次数（1-5）。"
         }
       }
     },
@@ -85,6 +104,10 @@
     "get_status": {
       "name": "获取状态",
       "description": "获取完整电机状态用于诊断（检查日志输出）。"
+    },
+    "get_info": {
+      "name": "获取信息",
+      "description": "获取网络信息用于诊断（检查日志输出）。"
     }
   }
 }

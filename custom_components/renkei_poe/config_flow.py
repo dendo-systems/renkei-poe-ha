@@ -55,6 +55,43 @@ STEP_RECONFIGURE_DATA_SCHEMA = vol.Schema(
 )
 
 
+def _connection_settings_schema(
+    config_entry: config_entries.ConfigEntry,
+) -> vol.Schema:
+    """Return the options schema with current values as defaults."""
+    data = config_entry.data
+    options = config_entry.options
+
+    return vol.Schema(
+        {
+            vol.Required(
+                CONF_RECONNECT_INTERVAL,
+                default=options.get(
+                    CONF_RECONNECT_INTERVAL,
+                    data.get(CONF_RECONNECT_INTERVAL, DEFAULT_RECONNECT_INTERVAL),
+                ),
+            ): vol.All(vol.Coerce(int), vol.Range(min=1, max=300)),
+            vol.Required(
+                CONF_HEALTH_CHECK_INTERVAL,
+                default=options.get(
+                    CONF_HEALTH_CHECK_INTERVAL,
+                    data.get(CONF_HEALTH_CHECK_INTERVAL, DEFAULT_HEALTH_CHECK_INTERVAL),
+                ),
+            ): vol.All(vol.Coerce(int), vol.Range(min=0, max=3600)),
+            vol.Required(
+                CONF_CONNECTION_STABILISE_DELAY,
+                default=options.get(
+                    CONF_CONNECTION_STABILISE_DELAY,
+                    data.get(
+                        CONF_CONNECTION_STABILISE_DELAY,
+                        DEFAULT_CONNECTION_STABILISE_DELAY,
+                    ),
+                ),
+            ): vol.All(vol.Coerce(float), vol.Range(min=0, max=10)),
+        }
+    )
+
+
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect."""
     
@@ -110,7 +147,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         
     except asyncio.TimeoutError as exc:
         await client.disconnect()
-        raise RenkeiConnectionError("Connection timeout") from exc
+        raise asyncio.TimeoutError("Connection timeout") from exc
     except Exception as exc:
         await client.disconnect()
         if isinstance(exc, RenkeiConnectionError):
@@ -135,6 +172,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlow:
         """Return a reconfigure flow."""
         return ConfigFlow()
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> OptionsFlowHandler:
+        """Return the options flow."""
+        return OptionsFlowHandler(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -275,6 +320,26 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 STEP_RECONFIGURE_DATA_SCHEMA, user_input
             ),
             errors=errors,
+        )
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle options for RENKEI PoE Motor Control."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialise the options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Manage connection options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=_connection_settings_schema(self.config_entry),
         )
 
 

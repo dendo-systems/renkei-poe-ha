@@ -62,8 +62,7 @@ The integration automatically discovers RENKEI motors on your network:
 1. **Navigate** to Settings > Devices & Services
 2. **Look** for "Discovered" notification for RENKEI motors
 3. **Click "Configure"** on the discovered motor
-4. **Enter** a friendly name for your motor
-5. **Click "Submit"** to complete setup
+4. **Click "Submit"** to confirm and complete setup
 
 ### Manual Configuration
 
@@ -108,7 +107,7 @@ The integration provides several services for advanced control and automation:
 Briefly move the motor for identification purposes.
 
 **Parameters:**
-- `count` (optional): Number of jog movements (1-10, default: 1)
+- `count` (optional): Number of jog movements (1-5, default: 1)
 
 **Example:**
 ```yaml
@@ -141,7 +140,7 @@ Move the motor to a specific absolute encoder position for precise control.
 
 **Parameters:**
 - `position` (required): Target encoder position (0-65536)
-- `delay` (optional): Delay before movement in milliseconds (0-10000, default: 0)
+- `delay` (optional): Delay before movement in milliseconds (0-65535, default: 0)
 
 **Example:**
 ```yaml
@@ -159,6 +158,16 @@ Retrieve full motor status for diagnostics (output appears in Home Assistant log
 **Example:**
 ```yaml
 service: renkei_poe.get_status
+target:
+  entity_id: cover.living_room_shade
+```
+
+### `renkei_poe.get_info`
+Retrieve network and firmware information for diagnostics (output appears in Home Assistant logs).
+
+**Example:**
+```yaml
+service: renkei_poe.get_info
 target:
   entity_id: cover.living_room_shade
 ```

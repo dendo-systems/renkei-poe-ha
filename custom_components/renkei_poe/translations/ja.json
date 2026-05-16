@@ -28,12 +28,31 @@
       "invalid_host": "無効な IP アドレス形式です。",
       "timeout": "接続タイムアウト。モーターがオンラインか確認してください。",
       "unknown": "不明なエラーが発生しました。",
-      "already_configured": "このモーターは既に設定されています。"
+      "already_configured": "このモーターは既に設定されています。",
+      "wrong_device": "この IP アドレスのモーターは別のデバイスです。"
     },
     "abort": {
       "already_configured": "このモーターは既に設定されています。",
       "already_in_progress": "このモーターの設定は既に進行中です。",
       "cannot_connect": "モーターに接続できませんでした。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RENKEI PoE モーターオプション",
+        "description": "このモーターの接続動作を調整します。",
+        "data": {
+          "reconnect_interval": "再接続間隔",
+          "health_check_interval": "ヘルスチェック間隔",
+          "connection_stabilise_delay": "接続安定化遅延"
+        },
+        "data_description": {
+          "reconnect_interval": "再接続を試行する間隔（秒）。",
+          "health_check_interval": "ヘルスチェックの間隔（秒）。0 に設定すると無効になります。",
+          "connection_stabilise_delay": "接続後、コマンド送信前に待機する秒数。"
+        }
+      }
     }
   },
   "entity": {
@@ -50,7 +69,7 @@
       "fields": {
         "count": {
           "name": "ジョグ回数",
-          "description": "モーターを動かす回数（1-10）。"
+          "description": "モーターを動かす回数（1-5）。"
         }
       }
     },
@@ -85,6 +104,10 @@
     "get_status": {
       "name": "ステータス取得",
       "description": "診断用の完全なモーターステータスを取得（出力はログを確認）。"
+    },
+    "get_info": {
+      "name": "情報取得",
+      "description": "診断用のネットワーク情報を取得（出力はログを確認）。"
     }
   }
 }

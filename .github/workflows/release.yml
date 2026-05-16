@@ -16,8 +16,69 @@ jobs:
 
       - name: Create ZIP
         run: |
-          cd custom_components/renkei_poe
-          zip -r ../../renkei_poe.zip .
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZIP_DEFLATED, ZipFile
+
+          integration_dir = Path("custom_components/renkei_poe")
+          output = Path("renkei_poe.zip")
+
+          with ZipFile(output, "w", ZIP_DEFLATED) as archive:
+              for path in sorted(integration_dir.rglob("*")):
+                  if path.is_dir():
+                      continue
+
+                  relative_path = path.relative_to(integration_dir).as_posix()
+                  if (
+                      relative_path.startswith("tests/")
+                      or "/__pycache__/" in f"/{relative_path}"
+                      or relative_path.endswith((".pyc", ".pyo"))
+                  ):
+                      continue
+
+                  archive.write(path, relative_path)
+          PY
+
+      - name: Validate ZIP layout
+        run: |
+          python3 - <<'PY'
+          import sys
+          from zipfile import ZipFile
+
+          with ZipFile("renkei_poe.zip") as archive:
+              names = archive.namelist()
+
+          errors = []
+          if "manifest.json" not in names:
+              errors.append("manifest.json must be at the archive root")
+
+          bad_names = [
+              name for name in names
+              if "\\" in name or name.startswith(("renkei_poe/", "custom_components/"))
+          ]
+          if bad_names:
+              errors.append(
+                  "archive entries must be relative to custom_components/renkei_poe: "
+                  + ", ".join(bad_names[:10])
+              )
+
+          runtime_clutter = [
+              name for name in names
+              if name.startswith("tests/") or "/__pycache__/" in f"/{name}"
+          ]
+          if runtime_clutter:
+              errors.append(
+                  "archive should only contain runtime integration files: "
+                  + ", ".join(runtime_clutter[:10])
+              )
+
+          if errors:
+              for error in errors:
+                  print(f"ERROR: {error}", file=sys.stderr)
+              sys.exit(1)
+
+          print("ZIP layout OK")
+          PY
 
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v2

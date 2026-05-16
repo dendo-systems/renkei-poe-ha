@@ -28,12 +28,31 @@
       "invalid_host": "Format d'adresse IP invalide.",
       "timeout": "Délai de connexion dépassé. Veuillez vérifier si le moteur est en ligne.",
       "unknown": "Une erreur inconnue s'est produite.",
-      "already_configured": "Ce moteur est déjà configuré."
+      "already_configured": "Ce moteur est déjà configuré.",
+      "wrong_device": "Le moteur à cette adresse IP est un appareil différent."
     },
     "abort": {
       "already_configured": "Ce moteur est déjà configuré.",
       "already_in_progress": "La configuration de ce moteur est déjà en cours.",
       "cannot_connect": "Impossible de se connecter au moteur."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options du Moteur RENKEI PoE",
+        "description": "Ajuster le comportement de connexion pour ce moteur.",
+        "data": {
+          "reconnect_interval": "Intervalle de reconnexion",
+          "health_check_interval": "Intervalle de vérification de santé",
+          "connection_stabilise_delay": "Délai de stabilisation de connexion"
+        },
+        "data_description": {
+          "reconnect_interval": "Secondes entre les tentatives de reconnexion.",
+          "health_check_interval": "Secondes entre les vérifications de santé. Définir sur 0 pour désactiver.",
+          "connection_stabilise_delay": "Secondes à attendre après la connexion avant d'envoyer des commandes."
+        }
+      }
     }
   },
   "entity": {
@@ -50,7 +69,7 @@
       "fields": {
         "count": {
           "name": "Nombre de Mouvements",
-          "description": "Nombre de fois pour déplacer le moteur (1-10)."
+          "description": "Nombre de fois pour déplacer le moteur (1-5)."
         }
       }
     },
@@ -85,6 +104,10 @@
     "get_status": {
       "name": "Obtenir le Statut",
       "description": "Obtenir le statut complet du moteur pour les diagnostics (vérifier les logs pour la sortie)."
+    },
+    "get_info": {
+      "name": "Obtenir les Infos",
+      "description": "Obtenir les informations réseau pour les diagnostics (vérifier les logs pour la sortie)."
     }
   }
 }

@@ -10,6 +10,7 @@ The RENKEI integration provides four specialised services for controlling and di
 - **`renkei_poe.set_position`** - Percentage-based positioning with delay
 - **`renkei_poe.absolute_move`** - Precise encoder-based positioning  
 - **`renkei_poe.get_status`** - Comprehensive diagnostic information
+- **`renkei_poe.get_info`** - Network and firmware diagnostic information
 
 All services support targeting specific motors or groups of motors using standard Home Assistant service targeting.
 
@@ -28,7 +29,7 @@ Briefly moves the motor to help identify which physical motor corresponds to the
 
 | Parameter | Type | Required | Default | Range | Description |
 |-----------|------|----------|---------|-------|-------------|
-| `count` | integer | No | 1 | 1-10 | Number of brief movements to perform |
+| `count` | integer | No | 1 | 1-5 | Number of brief movements to perform |
 
 ### Examples
 
@@ -211,7 +212,7 @@ Moves the motor to a specific absolute encoder position (0-65536) for maximum pr
 | Parameter | Type | Required | Default | Range | Unit | Description |
 |-----------|------|----------|---------|-------|------|-------------|
 | `position` | integer | **Yes** | - | 0-65536 | encoder steps | Target encoder position |
-| `delay` | integer | No | 0 | 0-10000 | milliseconds | Delay before starting movement |
+| `delay` | integer | No | 0 | 0-65535 | milliseconds | Delay before starting movement |
 
 ### Encoder Reference
 - **0** = Fully closed (minimum physical position)
@@ -429,6 +430,39 @@ After calling `get_status`, check the Home Assistant logs:
      'ip': '192.168.1.100'
    }
    ```
+
+---
+
+## `renkei_poe.get_info`
+
+Retrieves network and firmware information from the motor. The detailed information is logged to Home Assistant logs for analysis.
+
+### Use Cases
+- **Network Diagnostics**: Confirm IP address, MAC address, and hostname
+- **Support Requests**: Gather firmware and device identity information
+- **Inventory Checks**: Verify which physical motor is configured
+
+### Parameters
+
+This service takes no parameters - it retrieves all available network information.
+
+### Examples
+
+#### Basic Info Check
+```yaml
+service: renkei_poe.get_info
+target:
+  entity_id: cover.main_shade
+```
+
+#### Info Check for Multiple Motors
+```yaml
+service: renkei_poe.get_info
+target:
+  entity_id:
+    - cover.living_room_shade
+    - cover.bedroom_shade
+```
 
 ---
 
