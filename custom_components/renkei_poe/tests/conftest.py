@@ -19,6 +19,12 @@ from custom_components.renkei_poe.const import (
 from custom_components.renkei_poe.renkei_client import ConnectionState
 
 
+@pytest.fixture(autouse=True)
+def allow_custom_integration(enable_custom_integrations):
+    """Allow HA's loader to discover this integration in config-flow tests."""
+    yield
+
+
 @pytest.fixture
 def mock_renkei_client():
     """Mock RENKEI client for testing."""
@@ -38,9 +44,13 @@ def mock_renkei_client():
         mock_client.coordinator_client_class = coordinator_client_class
 
         # Mock successful connection and basic data
-        mock_client.connect = AsyncMock(return_value=True)
+        async def connect():
+            mock_client.connected = True
+            return True
+
+        mock_client.connect = AsyncMock(side_effect=connect)
         mock_client.disconnect = AsyncMock(return_value=None)
-        mock_client.connected = True
+        mock_client.connected = False
         mock_client.state = ConnectionState.CONNECTED
         mock_client.last_seen = "2023-01-01T00:00:00"
         mock_client.just_reconnected = False

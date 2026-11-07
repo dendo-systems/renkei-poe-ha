@@ -25,6 +25,7 @@ from .const import (
     MAX_POSITION,
     MIN_POSITION,
 )
+from .motor_status import MotorMotion, motor_motion
 from .renkei_client import RenkeiConnectionError, ConnectionState
 
 _LOGGER = logging.getLogger(__name__)
@@ -72,11 +73,16 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
         self._is_opening = False
         self._is_closing = False
         self._last_position: int | None = None
-        self._position_stable_count = 0
         
         # Track diagnostic data
         self._absolute_position: int | None = None
         self._current_error: dict[str, Any] | None = None
+
+        # Setup may happen while the motor is already moving.
+        initial_status = (coordinator.data or {}).get("status", {})
+        self._apply_motion_status(initial_status)
+        self._absolute_position = initial_status.get("current_pos")
+        self._last_position = self.current_cover_position
         
         # Register for real-time updates
         coordinator.add_status_listener(self._handle_status_update)
@@ -89,6 +95,14 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
         await super().async_will_remove_from_hass()
 
     @callback
+    def _apply_motion_status(self, data: dict[str, Any]) -> None:
+        """Use actual motor state; percentage rounding cannot prove a stop."""
+        motion = motor_motion(data.get("run_flags"))
+        if motion is not None:
+            self._is_opening = motion == MotorMotion.OPENING
+            self._is_closing = motion == MotorMotion.CLOSING
+
+    @callback
     def _handle_status_update(self, message: dict[str, Any]) -> None:
         """Handle real-time status updates from motor."""
         event_type = message.get("event")
@@ -98,6 +112,8 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
             # Real-time position update from CURRENT_POS event
             if "percent" in data:
                 new_position = int(data["percent"])
+                previous_absolute = self._absolute_position
+                self._absolute_position = None
                 
                 # Capture absolute position if available
                 if "absolute" in data:
@@ -114,27 +130,29 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
                 # Update coordinator data with new position (coordinator already handles this)
                 # Note: coordinator stores this as current_pos_percent, no need to duplicate
                 
-                # Detect movement based on position changes
-                if self._last_position is not None:
-                    if new_position > self._last_position:
+                # Raw encoder deltas avoid differing percentage rounding in
+                # CURRENT_POS and GET_STATUS. Also accept percentage-only data.
+                delta = None
+                if isinstance(previous_absolute, int) and isinstance(
+                    self._absolute_position, int
+                ):
+                    delta = self._absolute_position - previous_absolute
+                elif self._last_position is not None:
+                    delta = new_position - self._last_position
+                if delta is not None:
+                    if delta > 0:
                         # Position increasing - opening
                         self._is_opening = True
                         self._is_closing = False
-                        self._position_stable_count = 0
-                    elif new_position < self._last_position:
+                    elif delta < 0:
                         # Position decreasing - closing
                         self._is_opening = False
                         self._is_closing = True
-                        self._position_stable_count = 0
-                    else:
-                        # Position unchanged - check if we should stop
-                        self._position_stable_count += 1
-                        if self._position_stable_count >= 2:
-                            # Position stable for 2+ updates - not moving
-                            self._is_opening = False
-                            self._is_closing = False
+                    # Unchanged percentages can also mean slow movement. The
+                    # coordinator checks GET_STATUS when position settles.
                 
                 self._last_position = new_position
+                self._apply_motion_status(data)
                 self.async_write_ha_state()
         
         elif event_type == "ERROR" or message.get("response") == "ERROR":
@@ -150,24 +168,29 @@ class RenkeiCover(CoordinatorEntity[RenkeiCoordinator], CoverEntity):
                 "timestamp": datetime.now().isoformat()
             }
             
-            # Clear movement states on error
-            self._is_opening = False
-            self._is_closing = False
-            
+            # A command/query error does not prove that the motor stopped.
             self.async_write_ha_state()
             
-        elif message.get("response") == "GET_STATUS":
-            # Handle GET_STATUS responses - check if errors have cleared
-            err_flags = data.get("err_flags", 0)
-            if err_flags == 0 and self._current_error is not None:
-                # Error has cleared - remove error state
-                _LOGGER.debug("Motor error cleared (err_flags = 0)")
+        elif (
+            message.get("response") == "GET_STATUS"
+            or event_type == "MOTOR_STATUS"
+        ):
+            self._apply_motion_status(data)
+            if "current_pos" in data:
+                self._absolute_position = data["current_pos"]
+                # Do not compare a later percentage-only push to a differently
+                # rounded full-status position. Raw encoder comparisons remain.
+                self._last_position = None
+            if data.get("err_flags") == 0:
                 self._current_error = None
-                self.async_write_ha_state()
+            self.async_write_ha_state()
 
     @callback
     def _handle_connection_state(self, state: ConnectionState) -> None:
         """Handle connection state changes."""
+        self._is_opening = False
+        self._is_closing = False
+        self._last_position = None
         if state == ConnectionState.CONNECTED:
             # Reset absolute position cache when reconnected to force fresh data
             self._absolute_position = None

@@ -42,6 +42,8 @@ class RenkeiClient:
         self._status_callback: Optional[Callable[[Dict[str, Any]], None]] = None
         self._connection_callback: Optional[Callable[[ConnectionState], None]] = None
         self._lock = asyncio.Lock()
+        # Legacy responses correlate by command name, with no request ID.
+        self._status_lock = asyncio.Lock()
         self._shutdown_event = asyncio.Event()
         self._listen_ready = asyncio.Event()  # NEW: Signal when listen loop is ready
         
@@ -251,7 +253,7 @@ class RenkeiClient:
                 # Send GET_STATUS command to check health and refresh motor data
                 try:
                     await asyncio.wait_for(
-                        self.send_command("GET_STATUS", expect_response=True),
+                        self.get_status(),
                         timeout=5.0
                     )
                     _LOGGER.debug("Health check passed")
@@ -383,12 +385,19 @@ class RenkeiClient:
             if expect_response and cmd in self._pending_responses:
                 future = self._pending_responses.pop(cmd)
                 if not future.done():
-                    future.set_exception(e)
+                    future.cancel()
             
             if isinstance(e, (asyncio.TimeoutError, RenkeiConnectionError)):
                 raise
             else:
                 raise RenkeiConnectionError(f"Failed to send command '{cmd}': {e}")
+        finally:
+            # Cancellation (for example integration unload) must also remove
+            # the waiter, without deleting a later request's response future.
+            if self._pending_responses.get(cmd) is response_future:
+                self._pending_responses.pop(cmd, None)
+                if response_future is not None and not response_future.done():
+                    response_future.cancel()
 
     async def move(self, position: int, delay: int = 0) -> Optional[Dict[str, Any]]:
         """Move motor to position (0-100% open)."""
@@ -404,7 +413,8 @@ class RenkeiClient:
 
     async def get_status(self) -> Optional[Dict[str, Any]]:
         """Get motor status."""
-        return await self.send_command("GET_STATUS")
+        async with self._status_lock:
+            return await self.send_command("GET_STATUS")
 
     async def get_info(self) -> Optional[Dict[str, Any]]:
         """Get network info."""
