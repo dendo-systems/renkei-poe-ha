@@ -8,10 +8,10 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.components import zeroconf
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from homeassistant.util.network import is_ip_address
 
 from .const import (
@@ -217,7 +217,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_zeroconf(
-        self, discovery_info: zeroconf.ZeroconfServiceInfo
+        self, discovery_info: ZeroconfServiceInfo
     ) -> FlowResult:
         """Handle zeroconf discovery."""
         host = discovery_info.host
@@ -328,7 +328,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialise the options flow."""
-        self.config_entry = config_entry
+        self._entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -339,7 +339,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=_connection_settings_schema(self.config_entry),
+            data_schema=_connection_settings_schema(self._entry),
         )
 
 

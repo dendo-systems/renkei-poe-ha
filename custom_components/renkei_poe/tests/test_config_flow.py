@@ -1,9 +1,10 @@
 """Test the RENKEI PoE Motor Control config flow."""
 
 import asyncio
+from ipaddress import ip_address
 
 from homeassistant import config_entries
-from homeassistant.components.zeroconf import ZeroconfServiceInfo
+from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
@@ -36,7 +37,7 @@ async def test_form(hass: HomeAssistant) -> None:
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result["type"] == FlowResultType.FORM
-    assert result["errors"] == {}
+    assert not result["errors"]
 
 
 async def test_user_connection_error(hass: HomeAssistant, mock_renkei_client) -> None:
@@ -130,7 +131,8 @@ async def test_duplicate_device(hass: HomeAssistant, mock_renkei_client) -> None
 async def test_zeroconf_discovery(hass: HomeAssistant, mock_renkei_client) -> None:
     """Test zeroconf discovery flow."""
     discovery_info = ZeroconfServiceInfo(
-        host="192.168.1.100",
+        ip_address=ip_address("192.168.1.100"),
+        ip_addresses=[ip_address("192.168.1.100")],
         port=17002,
         hostname="RENKEI-A0B76531115B.local.",
         type="_dendo._tcp.local.",
@@ -151,7 +153,8 @@ async def test_zeroconf_discovery(hass: HomeAssistant, mock_renkei_client) -> No
 async def test_zeroconf_wrong_device(hass: HomeAssistant) -> None:
     """Test zeroconf discovery with wrong device type."""
     discovery_info = ZeroconfServiceInfo(
-        host="192.168.1.100",
+        ip_address=ip_address("192.168.1.100"),
+        ip_addresses=[ip_address("192.168.1.100")],
         port=80,
         hostname="OTHER-DEVICE.local.",
         type="_http._tcp.local.",

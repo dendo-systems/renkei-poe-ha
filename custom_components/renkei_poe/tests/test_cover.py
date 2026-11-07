@@ -138,6 +138,11 @@ async def test_cover_movement_state_from_current_pos(mock_hass, mock_renkei_clie
 
     cover._handle_status_update({"event": "CURRENT_POS", "data": {"percent": 42}})
     cover._handle_status_update({"event": "CURRENT_POS", "data": {"percent": 42}})
+    assert cover.is_closing is True
+
+    cover._handle_status_update(
+        {"response": "GET_STATUS", "data": {"run_flags": 0}}
+    )
     assert cover.is_opening is False
     assert cover.is_closing is False
 
@@ -252,7 +257,7 @@ async def test_cover_error_handling(mock_hass, mock_renkei_client):
 
     cover._handle_status_update({"event": "ERROR", "data": {"code": 300}})
 
-    assert cover.is_opening is False
+    assert cover.is_opening is True
     assert cover.is_closing is False
     assert cover._current_error is not None
     assert cover._current_error["code"] == 300

@@ -17,8 +17,8 @@ Thank you for your interest in contributing to the RENKEI PoE Motor Control Inte
 
 ### Prerequisites
 
-- Python 3.11 or later
-- Home Assistant 2023.8 or later
+- Python 3.14 for the pinned test environment
+- Home Assistant 2026.10.4 for development testing (pinned with its test plugin)
 - Basic understanding of Home Assistant custom components
 - Familiarity with asyncio and TCP networking concepts
 
@@ -47,8 +47,7 @@ cd renkei-poe-ha
 
 ```bash
 # Install test dependencies
-cd custom_components/renkei_poe/tests
-pip install -r requirements.txt
+pip install -r custom_components/renkei_poe/tests/requirements.txt
 ```
 
 ### 3. Home Assistant Development
@@ -56,8 +55,8 @@ pip install -r requirements.txt
 For testing with Home Assistant:
 
 ```bash
-# Install Home Assistant in development mode
-pip install homeassistant>=2023.8.0
+# Install the pinned Home Assistant and test dependencies
+pip install -r custom_components/renkei_poe/tests/requirements.txt
 
 # Create a test configuration directory
 mkdir -p ~/.homeassistant/custom_components
@@ -112,15 +111,15 @@ python3 -m script.hassfest --integration-path custom_components/renkei_poe/
 
 ```bash
 # Run full test suite with coverage
-python3 -m pytest tests/ --cov=custom_components/renkei_poe
+python3 -m pytest
 
 # Run specific test files
-python3 -m pytest tests/test_config_flow.py -v
-python3 -m pytest tests/test_cover.py -v
-python3 -m pytest tests/test_init.py -v
+python3 -m pytest custom_components/renkei_poe/tests/test_config_flow.py -v
+python3 -m pytest custom_components/renkei_poe/tests/test_cover.py -v
+python3 -m pytest custom_components/renkei_poe/tests/test_motor_status.py -v
 
 # Run tests with coverage report
-python3 -m pytest tests/ --cov=custom_components/renkei_poe --cov-report=html
+python3 -m pytest --cov-report=html
 ```
 
 ### Test Requirements
@@ -152,7 +151,7 @@ python3 -m pytest tests/ --cov=custom_components/renkei_poe --cov-report=html
 
 4. **Run the test suite** and ensure all tests pass:
    ```bash
-   python3 -m pytest tests/ --cov=custom_components/renkei_poe
+   python3 -m pytest
    ```
 
 5. **Update documentation** if needed (README.md, SERVICES.md, etc.)

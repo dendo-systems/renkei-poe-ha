@@ -4,7 +4,7 @@ import asyncio
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
@@ -20,6 +20,23 @@ from custom_components.renkei_poe.const import (
     SERVICE_SET_POSITION,
 )
 from custom_components.renkei_poe.renkei_client import ConnectionState
+
+
+@pytest.fixture(autouse=True)
+async def setup_entry_state(hass, mock_config_entry):
+    """Direct setup calls start in HA's setup-in-progress lifecycle state."""
+    mock_config_entry._async_set_state(
+        hass, ConfigEntryState.SETUP_IN_PROGRESS, None
+    )
+    with patch(
+        "homeassistant.config_entries.ConfigEntries."
+        "async_forward_entry_setups",
+        new_callable=AsyncMock,
+    ):
+        yield
+    coordinator = getattr(mock_config_entry, "runtime_data", None)
+    if coordinator is not None:
+        await coordinator.async_shutdown()
 
 
 async def test_setup_registers_entity_services(hass: HomeAssistant) -> None:
@@ -144,12 +161,12 @@ async def test_coordinator_uses_options(
     hass: HomeAssistant, mock_config_entry: ConfigEntry, mock_renkei_client
 ) -> None:
     """Test coordinator prefers options over stored defaults."""
-    mock_config_entry.options = {
+    mock_config_entry.add_to_hass(hass)
+    hass.config_entries.async_update_entry(mock_config_entry, options={
         CONF_RECONNECT_INTERVAL: 30,
         CONF_HEALTH_CHECK_INTERVAL: 120,
         CONF_CONNECTION_STABILISE_DELAY: 2.0,
-    }
-    mock_config_entry.add_to_hass(hass)
+    })
 
     with patch("custom_components.renkei_poe.PLATFORMS", ["cover"]):
         await async_setup_entry(hass, mock_config_entry)

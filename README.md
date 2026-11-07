@@ -247,13 +247,24 @@ The integration uses **real-time push notifications** from the motor, providing:
 - **Instant position updates** during movement
 - **Error notifications** when issues occur
 - **Connection state changes** for availability tracking
-- **No polling required** - efficient and responsive
+- **Motion confirmation** using the existing `GET_STATUS` command, compatible
+  with vendor 1.x and in-house 2.x firmware
 
 Data flows:
 1. **Initial Setup**: GET_STATUS command retrieves current state
 2. **Real-time Updates**: CURRENT_POS events during movement
-3. **Error Handling**: ERROR events for troubleshooting
-4. **Health Monitoring**: Optional periodic status checks
+3. **Stop Detection**: After two seconds without a changed position, GET_STATUS
+   confirms whether the motor is still moving. Its motion flags clear
+   opening/closing at either limit or at an intermediate stop. Repeated vendor
+   position events do not delay this check; a single final 2.x event is enough.
+4. **Error Handling**: Status checks try up to three times on failure and never
+   assume the motor stopped. ERROR events remain available for troubleshooting.
+5. **Health Monitoring**: Optional periodic status checks, independent of stop
+   detection. Disabling health checks does not disable motion confirmation.
+
+Fresh full status also reconciles the encoder position, so a truncated push
+percentage does not keep a stopped open endpoint at 99%. No firmware update or
+new protocol command is required.
 
 ## Use Cases
 
